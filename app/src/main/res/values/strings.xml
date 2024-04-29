@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">pokemon</string>
+    <string name="an_unexpected_error_occurred">An unexpected error occurred</string>
+    <string name="check_your_internet_connection">Couldn\'t reach server. Check your internet connection.</string>
+    <string name="try_again_message">please, try again after some time</string>
+    <string name="pokemon_image_accessibility">Pokemon picture</string>
+    <string name="pokemon_detail_title">Pokemon</string>
+    <string name="back">back</string>
+    <string name="height">Height: %s</string>
+    <string name="weight">Weight: %s</string>
+    <string name="specie">Specie: %s</string>
+    <string name="base_experience">Base experience: %s</string>
+    <string name="movements">Know movements</string>
+
+</resources>
