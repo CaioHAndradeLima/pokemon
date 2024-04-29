@@ -40,7 +40,7 @@
 
 ## Architecture organization
 
-Presentation <-> Bloc <-> UseCase <-> Repository
+Presentation <-> ViewModel <-> UseCase <-> Repository
 
 ## App Features
 
@@ -48,6 +48,17 @@ Presentation <-> Bloc <-> UseCase <-> Repository
 |--------------|------------------------------
 | Pokemons     | Show a list of pokemons
 | Pokemon      | Show pockemon details
+
+
+## Other Apps
+
+if you would like see local persistence on Android App, [see this project](https://github.com/CaioHAndradeLima/jetpackComposeAssignment)
+
+
+## Hybrid experience
+
+I have experience on flutter apps, [see here](https://github.com/CaioHAndradeLima/mobile_portfolio/tree/main/portfolio_flutter)
+
 
 </body>
 </html>
