@@ -33,7 +33,7 @@
 | Common       | Common files for any module/package                            
 | Data         | Define contract interface and repository layer                           
 | Domain       | Repository implementation and application use cases                  
-| Presentation | UI Layer and ViewModel (business logic)                            
+| Presentation | UI Layer and ViewModel                
 | di           | Dependency Injection setup                         
 | theme        | Define colors, styles and more                            
 
@@ -47,7 +47,7 @@ Presentation <-> ViewModel <-> UseCase <-> Repository
 | Feature      | Description
 |--------------|------------------------------
 | Pokemons     | Show a list of pokemons
-| Pokemon      | Show pockemon details
+| Pokemon      | Show pokemon details
 
 
 ## Other Apps
@@ -57,7 +57,7 @@ if you would like see local persistence on Android App, [see this project](https
 
 ## Hybrid experience
 
-I have experience on flutter apps, [see here](https://github.com/CaioHAndradeLima/mobile_portfolio/tree/main/portfolio_flutter)
+I have experience on flutter apps, [see here](https://github.com/CaioHAndradeLima/nasa)
 
 
 </body>
