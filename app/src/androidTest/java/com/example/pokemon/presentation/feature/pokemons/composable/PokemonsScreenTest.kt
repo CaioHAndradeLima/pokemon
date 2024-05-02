@@ -30,12 +30,13 @@ class PokemonsScreenTest {
     @Test
     fun testPokemonsScreenSuccessState() = runTest {
         val useCase = mockk<PokemonsUseCase>()
-        val viewModel = PokemonsViewModel(useCase)
         val pokemon = provideDefaultPokemonTest()
 
         every { useCase.invoke() } returns flowOf(
             RequestResource.Success(listOf(pokemon))
         )
+
+        val viewModel = PokemonsViewModel(useCase)
 
         composeTestRule.setContent {
             PokemonsScreen(onClick = {}, viewModel = viewModel)
@@ -48,13 +49,13 @@ class PokemonsScreenTest {
     fun testPokemonsScreenTryAgainState() = runTest {
         val errorMessage = "Error while loading information"
         val useCase = mockk<PokemonsUseCase>()
-        val viewModel = PokemonsViewModel(useCase)
-
         every { useCase.invoke() } returns flowOf(
             RequestResource.Error(
                 message = UiText.Dynamic(errorMessage)
             )
         )
+
+        val viewModel = PokemonsViewModel(useCase)
 
         composeTestRule.setContent {
             PokemonsScreen(viewModel = viewModel, onClick = {})
