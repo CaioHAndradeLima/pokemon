@@ -1,10 +1,11 @@
-package com.example.pokemon.domain.repository
+package com.example.pokemon.data
 
 import com.example.pokemon.data.model.Ability
 import com.example.pokemon.data.model.AbilityInfoPokemon
 import com.example.pokemon.data.model.AbilityPokemonDetail
 import com.example.pokemon.data.model.PokemonAbilityResponse
 import com.example.pokemon.data.repository.PokemonApi
+import com.example.pokemon.data.repository.PokemonRemoteRepository
 import com.example.pokemon.provider.provideDefaultPokemonTest
 import io.mockk.coEvery
 import io.mockk.mockk

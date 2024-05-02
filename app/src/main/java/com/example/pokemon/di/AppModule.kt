@@ -2,7 +2,7 @@ package com.example.pokemon.di
 
 import com.example.pokemon.data.repository.PokemonApi
 import com.example.pokemon.data.repository.PokemonApiRepository
-import com.example.pokemon.domain.repository.PokemonRemoteRepository
+import com.example.pokemon.data.repository.PokemonRemoteRepository
 import com.example.pokemon.domain.usecase.PokemonUseCase
 import com.example.pokemon.domain.usecase.PokemonsUseCase
 import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonViewModel

@@ -1,13 +1,11 @@
-package com.example.pokemon.domain.repository
+package com.example.pokemon.data.repository
 
 import com.example.pokemon.data.model.Pokemon
-import com.example.pokemon.data.repository.PokemonApi
-import com.example.pokemon.data.repository.PokemonApiRepository
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class PokemonRemoteRepository @Inject constructor(
+internal class PokemonRemoteRepository @Inject constructor(
     private val api: PokemonApi
 ) : PokemonApiRepository {
 
