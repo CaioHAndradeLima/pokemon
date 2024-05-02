@@ -24,6 +24,7 @@
 | Dependency Injection          | ✓                            
 | Good Test Coverage            | ✓                            
 | Unit Tests                    | ✓                            
+| UI Tests                      | ✓                            
 
 
 ## Package organization
