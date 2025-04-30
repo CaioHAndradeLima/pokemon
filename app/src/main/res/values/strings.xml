@@ -10,6 +10,6 @@
     <string name="weight">Weight: %s</string>
     <string name="specie">Specie: %s</string>
     <string name="base_experience">Base experience: %s</string>
-    <string name="movements">Know movements</string>
+    <string name="movements">Known movements</string>
 
 </resources>
