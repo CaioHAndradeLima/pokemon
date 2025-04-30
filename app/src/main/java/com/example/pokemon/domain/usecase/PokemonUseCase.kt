@@ -12,6 +12,7 @@ class PokemonUseCase(
 ) {
 
     operator fun invoke(id: String): Flow<RequestResource<Pokemon>> = flow {
+        emit(RequestResource.Loading())
 
         when (val pokemon = repository.getPokemon(id)) {
             is ResponseApi.Success -> {

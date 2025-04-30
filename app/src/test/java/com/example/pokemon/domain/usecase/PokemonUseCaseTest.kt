@@ -3,6 +3,7 @@ package com.example.pokemon.domain.usecase
 import com.example.pokemon.R
 import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.common.resource.UiText
+import com.example.pokemon.data.ResponseApi
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.data.repository.PokemonApiRepository
 import com.example.pokemon.provider.provideDefaultPokemonTest
@@ -14,7 +15,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
 import retrofit2.HttpException
-import java.io.IOException
 
 class PokemonUseCaseTest {
 
@@ -26,7 +26,7 @@ class PokemonUseCaseTest {
         // Given
         val fakePokemon = provideDefaultPokemonTest()
         val id = "1"
-        coEvery { repository.getPokemon(id) } returns fakePokemon
+        coEvery { repository.getPokemon(id) } returns ResponseApi.Success(fakePokemon)
 
         // When
         val result = mutableListOf<RequestResource<Pokemon>>()
@@ -43,15 +43,14 @@ class PokemonUseCaseTest {
     fun `test PokemonUseCase emits error when HTTP exception occurs`() = runBlocking {
         // Given
         val id = "1"
-        val response = mockk<retrofit2.Response<*>>(
-            relaxed = true
-        )
+        val response = mockk<retrofit2.Response<*>>(relaxed = true)
         val message = "error message"
         every { response.message() } returns message
         every { response.code() } returns 500
 
-        val exception = HttpException(response);
-        coEvery { repository.getPokemon(id) } throws exception
+        val exception = HttpException(response)
+        coEvery { repository.getPokemon(id) } returns ResponseApi.Error.Http(UiText.Dynamic(exception.localizedMessage))
+
         // When
         val result = pokemonUseCase(id).toList()
 
@@ -60,14 +59,14 @@ class PokemonUseCaseTest {
         Assert.assertTrue(result[0] is RequestResource.Loading)
         Assert.assertTrue(result[1] is RequestResource.Error)
         val errorResult = result[1] as RequestResource.Error
-        Assert.assertEquals(UiText.Dynamic(exception.localizedMessage), errorResult.message)
+        Assert.assertEquals(UiText.Dynamic(exception.localizedMessage ?: "Unknown error"), errorResult.message)
     }
 
     @Test
     fun `test PokemonUseCase emits error when IO exception occurs`() = runBlocking {
         // Given
         val id = "1"
-        coEvery { repository.getPokemon(id) } throws IOException()
+        coEvery { repository.getPokemon(id) } returns ResponseApi.Error.Connection()
 
         // When
         val result = mutableListOf<RequestResource<Pokemon>>()

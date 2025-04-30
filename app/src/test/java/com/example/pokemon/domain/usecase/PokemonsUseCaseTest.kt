@@ -5,8 +5,10 @@ import com.example.pokemon.assertInstanceOf
 import com.example.pokemon.assertSameClass
 import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.common.resource.UiText
+import com.example.pokemon.data.ResponseApi
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.data.repository.PokemonApiRepository
+import com.example.pokemon.data.repository.PokemonRemoteRepository
 import com.example.pokemon.getHttpExceptionMessage
 import com.example.pokemon.provider.provideDefaultPokemonTest
 import com.example.pokemon.provider.providePokemonWithoutPictureTest
@@ -23,7 +25,7 @@ import java.io.IOException
 
 class PokemonsUseCaseTest {
 
-    private val repository: PokemonApiRepository = mockk()
+    private val repository = mockk<PokemonApiRepository>()
     private val pokemonsUseCase = PokemonsUseCase(repository)
 
     @Test
@@ -31,7 +33,8 @@ class PokemonsUseCaseTest {
         // Given
         val pokemon = provideDefaultPokemonTest()
         val fakePokemons = listOf(pokemon)
-        coEvery { repository.getPokemons() } returns fakePokemons
+        val responseApi = ResponseApi.Success(fakePokemons)
+        coEvery { repository.getPokemons() } returns responseApi
 
         // When
         val result = mutableListOf<RequestResource<List<Pokemon>>>()
@@ -49,7 +52,7 @@ class PokemonsUseCaseTest {
         // Given
         val pokemon = providePokemonWithoutPictureTest()
         val fakePokemons = listOf(pokemon)
-        coEvery { repository.getPokemons() } returns fakePokemons
+        coEvery { repository.getPokemons() } returns ResponseApi.Success(fakePokemons)
 
         // When
         val result = mutableListOf<RequestResource<List<Pokemon>>>()
@@ -59,36 +62,32 @@ class PokemonsUseCaseTest {
         Assert.assertTrue(result[0] is RequestResource.Loading)
         Assert.assertTrue(result[1] is RequestResource.Success)
         val successResult = result[1] as RequestResource.Success
-        Assert.assertEquals(listOf<Pokemon>(), successResult.data)
+        Assert.assertEquals(emptyList<Pokemon>(), successResult.data)
     }
 
     @Test
-    fun `test PokemonsUseCase emits error when HTTP exception occurs`() = runBlocking {
+    fun `test PokemonsUseCase emits error when HTTP error occurs`() = runBlocking {
         // Given
-        val response = mockk<Response<*>>(
-            relaxed = true
-        )
         val message = "error message"
-        every { response.message() } returns message
-        every { response.code() } returns 500
+        val uiTextExpected = UiText.Dynamic(message)
+        coEvery { repository.getPokemons() } returns ResponseApi.Error.Http(uiTextExpected)
 
-        coEvery { repository.getPokemons() } throws HttpException(response)
-        val uiTextExpected = getHttpExceptionMessage(message)
         // When
         val result = pokemonsUseCase().toList()
 
         // Then
         Assert.assertEquals(2, result.size)
-        assertSameClass(RequestResource.Loading<List<Pokemon>>(), result[0])
-        assertSameClass(RequestResource.Error<List<Pokemon>>(message = uiTextExpected), result[1])
-        assertSameClass(uiTextExpected, result[1].message)
-        assertInstanceOf<UiText.Dynamic>(result[1].message)
+        Assert.assertTrue(result[0] is RequestResource.Loading)
+        Assert.assertTrue(result[1] is RequestResource.Error)
+        val errorResult = result[1] as RequestResource.Error
+        Assert.assertEquals(uiTextExpected, errorResult.message)
+        Assert.assertTrue(errorResult.message is UiText.Dynamic)
     }
 
     @Test
-    fun `test PokemonsUseCase emits error when IO exception occurs`() = runBlocking {
+    fun `test PokemonsUseCase emits error when IO error occurs`() = runBlocking {
         // Given
-        coEvery { repository.getPokemons() } throws IOException()
+        coEvery { repository.getPokemons() } returns ResponseApi.Error.Connection()
 
         // When
         val result = mutableListOf<RequestResource<List<Pokemon>>>()
