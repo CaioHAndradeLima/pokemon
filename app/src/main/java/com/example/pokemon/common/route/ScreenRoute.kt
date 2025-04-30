@@ -7,11 +7,11 @@ sealed class ScreenRoute(private val initialRoute: String, private val pathRoute
     internal fun route(): String {
         pathRoute?.let { return@route return "$initialRoute/$pathRoute"; }
 
-        return "$initialRoute";
+        return initialRoute
     }
 
     internal fun buildRoute(vararg params: String): String {
         val pathParams = params.reduce { before, now -> "$before/$now" }
-        return "$initialRoute/$pathParams";
+        return "$initialRoute/$pathParams"
     }
 }
