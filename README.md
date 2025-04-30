@@ -6,7 +6,26 @@
 </head>
 <body>
 
-## Android project
+## Android Pokemon project
+
+## Screenshots
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      Main Page
+      <br>
+      <img src="https://github.com/user-attachments/assets/e25634a6-e317-4ab7-8b15-e5084aba3eff" height="300" style="margin-right: 20px;" />
+    </td>
+    <td align="center">
+      Details Page
+      <br>
+      <img src="https://github.com/user-attachments/assets/d90805af-676a-4925-bbea-3fd89ac8b932" height="300" />
+    </td>
+  </tr>
+</table>
 
 ## Pokemon
 
