@@ -10,8 +10,6 @@
 
 ## Screenshots
 
-## Screenshots
-
 <table>
   <tr>
     <td align="center">
@@ -69,6 +67,102 @@ Presentation <-> ViewModel <-> UseCase <-> Repository
 | Pokemons     | Show a list of pokemons
 | Pokemon      | Show pokemon details
 
+
+## See the code yourself
+
+<details>
+  <summary>View Model implementation</summary>
+
+  ```kotlin
+@HiltViewModel
+class PokemonsViewModel @Inject constructor(
+    private val pokemonUseCase: PokemonsUseCase,
+) : ViewModel() {
+    private val _pokemonsState = MutableStateFlow<PokemonsState>(PokemonsState.Loading)
+    internal val pokemonsState = _pokemonsState.asStateFlow()
+
+    init {
+        on(PokemonsEvent.StartRequest)
+    }
+
+    internal fun on(event: PokemonsEvent) {
+        when (event) {
+            is PokemonsEvent.StartRequest -> {
+                getPokemons()
+            }
+        }
+    }
+
+    private fun getPokemons() {
+        pokemonUseCase().onEach { currentResult ->
+
+            when (currentResult) {
+                is RequestResource.Success -> {
+                    _pokemonsState.value = PokemonsState.Show(currentResult.data!!)
+                }
+                is RequestResource.Error -> {
+                    _pokemonsState.value = PokemonsState.TryAgain(currentResult.message!!)
+                }
+                is RequestResource.Loading -> {
+                    _pokemonsState.value = PokemonsState.Loading
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+}
+```
+</details> 
+
+<details>
+  <summary>Use Case implementation</summary>
+
+  ```kotlin
+class PokemonsUseCase(
+    private val repository: PokemonApiRepository
+) {
+
+    operator fun invoke(): Flow<RequestResource<List<Pokemon>>> = flow {
+        emit(RequestResource.Loading())
+
+        when (val pokemons = repository.getPokemons()) {
+            is ResponseApi.Success -> {
+                emit(
+                    RequestResource.Success(
+                        pokemons.data
+                        .filter { it.sprites?.hasPicture() == true }
+                        .map { it.copy() })
+                )
+            }
+
+            is ResponseApi.Error -> {
+                emit(RequestResource.Error(pokemons.message))
+            }
+        }
+    }
+}
+```
+</details> 
+
+<details>
+  <summary>Repository implementation</summary>
+
+  ```kotlin
+internal class PokemonRemoteRepository @Inject constructor(
+    private val api: PokemonApi
+) : PokemonApiRepository {
+
+    override suspend fun getPokemon(id: String) = try {
+        ResponseApi.Success(
+            api.getPokemonById(id)
+        )
+    } catch (e: HttpException) {
+        ResponseApi.Error.Http(e.toErrorMessage())
+    } catch (e: IOException) {
+        ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+    }
+}
+```
+</details> 
 
 ## Other Apps
 
