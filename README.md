@@ -162,7 +162,11 @@ internal class PokemonRemoteRepository @Inject constructor(
     }
 }
 ```
-</details> 
+</details>
+
+## Continuous integration enabled
+
+any pull request opened will run the build, unit tests and espresso tests. See the [CI algoritm here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
 
 ## Other Apps
 
