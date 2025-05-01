@@ -168,10 +168,6 @@ internal class PokemonRemoteRepository @Inject constructor(
 
 any pull request opened will run the build, unit tests and espresso tests. See the [CI algoritm here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
 
-## Other Apps
-
-if you would like see local persistence on Android App, [see this project](https://github.com/CaioHAndradeLima/jetpackComposeAssignment)
-
 ## Hybrid experience
 
 I have experience on flutter apps, [see here](https://github.com/CaioHAndradeLima/nasa)
@@ -179,6 +175,10 @@ I have experience on flutter apps, [see here](https://github.com/CaioHAndradeLim
 ## Nest JS experience
 
 I have experience creating Nest JS api, [see here](https://github.com/CaioHAndradeLima/nasa-api)
+
+## Other Apps
+
+if you would like to see more Android apps experience, see this other project with local persistence [see this project](https://github.com/CaioHAndradeLima/jetpackComposeAssignment)
 
 </body>
 </html>
