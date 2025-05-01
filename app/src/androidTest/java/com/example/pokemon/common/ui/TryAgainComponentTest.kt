@@ -24,5 +24,6 @@ internal class TryAgainComponentTest {
         }
 
         composeTestRule.onNodeWithText("message").assertExists()
+        throw Exception("testing pipeline error")
     }
 }
