@@ -9,8 +9,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,7 +18,6 @@ import com.example.pokemon.common.ui.DefaultTopBar
 import com.example.pokemon.common.ui.ProgressComponent
 import com.example.pokemon.common.ui.TryAgainComponent
 import com.example.pokemon.data.model.Pokemon
-import com.example.pokemon.presentation.feature.pokemons.composable.PokemonItem
 import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsViewModel
 import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsState
 
@@ -28,7 +27,7 @@ fun PokemonsScreen(
     onClick: (Pokemon) -> Unit,
     viewModel: PokemonsViewModel = hiltViewModel()
 ) {
-    val state by viewModel.pokemonsState.collectAsState()
+    val state by viewModel.pokemonsState.observeAsState(PokemonsState.Loading)
 
     val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
