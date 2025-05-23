@@ -4,29 +4,22 @@ import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.data.ResponseApi
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.data.repository.PokemonApiRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class PokemonsUseCase(
     private val repository: PokemonApiRepository
 ) {
 
-    operator fun invoke(): Flow<RequestResource<List<Pokemon>>> = flow {
-        emit(RequestResource.Loading())
-
+    suspend operator fun invoke(): RequestResource<List<Pokemon>> =
         when (val pokemons = repository.getPokemons()) {
             is ResponseApi.Success -> {
-                emit(
-                    RequestResource.Success(
-                        pokemons.data
+                RequestResource.Success(
+                    pokemons.data
                         .filter { it.sprites?.hasPicture() == true }
                         .map { it.copy() })
-                )
             }
 
             is ResponseApi.Error -> {
-                emit(RequestResource.Error(pokemons.message))
+                RequestResource.Error(pokemons.message)
             }
         }
-    }
 }
