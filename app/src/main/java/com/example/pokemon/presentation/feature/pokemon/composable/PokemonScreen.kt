@@ -13,8 +13,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,7 +40,7 @@ fun PokemonScreen(
     navController: NavHostController,
     pokemonViewModel: PokemonViewModel = hiltViewModel(),
 ) {
-    val state = pokemonViewModel.pokemonState.collectAsState()
+    val state = pokemonViewModel.pokemonState.observeAsState(PokemonState.Loading)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var alpha by remember { mutableStateOf(0.1F) }
     LaunchedEffect(key1 = id) {
