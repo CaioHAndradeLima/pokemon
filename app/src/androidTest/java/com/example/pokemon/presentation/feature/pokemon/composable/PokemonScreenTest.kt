@@ -10,6 +10,7 @@ import com.example.pokemon.common.resource.UiText
 import com.example.pokemon.domain.usecase.PokemonUseCase
 import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonViewModel
 import com.example.pokemon.provider.provideDefaultPokemonTest
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -30,9 +31,7 @@ class PokemonScreenTest {
         val id = "1"
         val pokemon = provideDefaultPokemonTest()
 
-        every { useCase.invoke(id) } returns flowOf(
-            RequestResource.Success(pokemon)
-        )
+        coEvery { useCase(id) } returns RequestResource.Success(pokemon)
 
         composeTestRule.setContent {
             PokemonScreen(id = id, navController = mockk(), pokemonViewModel = viewModel)
@@ -47,10 +46,8 @@ class PokemonScreenTest {
         val useCase = mockk<PokemonUseCase>()
         val viewModel = PokemonViewModel(useCase)
         val id = "1"
-        every { useCase.invoke(id) } returns flowOf(
-            RequestResource.Error(
-                message = UiText.Dynamic(errorMessage)
-            )
+        coEvery { useCase(id) } returns RequestResource.Error(
+            message = UiText.Dynamic(errorMessage)
         )
 
         composeTestRule.setContent {
