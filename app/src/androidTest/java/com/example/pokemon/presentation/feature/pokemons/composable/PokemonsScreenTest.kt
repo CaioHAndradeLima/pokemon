@@ -14,6 +14,7 @@ import com.example.pokemon.presentation.feature.pokemon.composable.PokemonScreen
 import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonViewModel
 import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsViewModel
 import com.example.pokemon.provider.provideDefaultPokemonTest
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -32,9 +33,7 @@ class PokemonsScreenTest {
         val useCase = mockk<PokemonsUseCase>()
         val pokemon = provideDefaultPokemonTest()
 
-        every { useCase.invoke() } returns flowOf(
-            RequestResource.Success(listOf(pokemon))
-        )
+        coEvery { useCase() } returns RequestResource.Success(listOf(pokemon))
 
         val viewModel = PokemonsViewModel(useCase)
 
@@ -49,10 +48,8 @@ class PokemonsScreenTest {
     fun testPokemonsScreenTryAgainState() = runTest {
         val errorMessage = "Error while loading information"
         val useCase = mockk<PokemonsUseCase>()
-        every { useCase.invoke() } returns flowOf(
-            RequestResource.Error(
-                message = UiText.Dynamic(errorMessage)
-            )
+        coEvery { useCase() } returns RequestResource.Error(
+            message = UiText.Dynamic(errorMessage)
         )
 
         val viewModel = PokemonsViewModel(useCase)
