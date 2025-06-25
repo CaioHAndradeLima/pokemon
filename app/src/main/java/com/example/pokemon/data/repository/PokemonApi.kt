@@ -3,6 +3,7 @@ package com.example.pokemon.data.repository
 import com.example.pokemon.data.model.Ability
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.data.model.PokemonAbilityResponse
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,23 +13,23 @@ import retrofit2.http.Url
 interface PokemonApi {
 
     @GET("ability")
-    suspend fun getAbilityResponse(
+    fun getAbilityResponse(
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
-    ): PokemonAbilityResponse
+    ): Single<PokemonAbilityResponse>
 
     @GET
-    suspend fun getAbilityDetails(
+    fun getAbilityDetails(
         @Url url: String,
-    ): Ability
+    ): Single<Ability>
 
     @GET
-    suspend fun getPokemon(
+    fun getPokemon(
         @Url url: String,
-    ): Pokemon?
+    ): Single<Pokemon>
 
     @GET("pokemon/{id}")
-    suspend fun getPokemonById(
+    fun getPokemonById(
         @Path("id") id: String,
-    ): Pokemon
+    ): Single<Pokemon>
 }
