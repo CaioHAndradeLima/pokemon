@@ -80,6 +80,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
+    // RxJava 3
+    implementation "io.reactivex.rxjava3:rxjava:3.1.8"
+    implementation "io.reactivex.rxjava3:rxandroid:3.0.2"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:2.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:1.7.3"
+
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     kapt "com.google.dagger:hilt-compiler:2.48"
 
