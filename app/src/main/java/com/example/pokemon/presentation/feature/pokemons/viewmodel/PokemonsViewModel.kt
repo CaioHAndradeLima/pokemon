@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx3.asFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,20 +32,23 @@ class PokemonsViewModel @Inject constructor(
         }
     }
 
-    private fun getPokemons() {
-        pokemonUseCase().onEach { currentResult ->
+    private fun getPokemons() = viewModelScope.launch {
+        pokemonUseCase()
+            .asFlow()
+            .collect { currentResult ->
+                when (currentResult) {
+                    is RequestResource.Success -> {
+                        _pokemonsState.value = PokemonsState.Show(currentResult.data!!)
+                    }
 
-            when (currentResult) {
-                is RequestResource.Success -> {
-                    _pokemonsState.value = PokemonsState.Show(currentResult.data!!)
-                }
-                is RequestResource.Error -> {
-                    _pokemonsState.value = PokemonsState.TryAgain(currentResult.message!!)
-                }
-                is RequestResource.Loading -> {
-                    _pokemonsState.value = PokemonsState.Loading
+                    is RequestResource.Error -> {
+                        _pokemonsState.value = PokemonsState.TryAgain(currentResult.message!!)
+                    }
+
+                    is RequestResource.Loading -> {
+                        _pokemonsState.value = PokemonsState.Loading
+                    }
                 }
             }
-        }.launchIn(viewModelScope)
     }
 }
