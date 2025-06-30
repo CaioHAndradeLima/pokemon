@@ -8,6 +8,15 @@
 
 ## Android Pokemon project
 
+this project has 3 different versions of most used android library in the world such as Flow/Rx/LiveData/corotines.
+
+
+| Branch                       | implementation
+|-------------------------------|------------------------------
+| main               | Kotlin Flow
+| feature/rx               | RxJava
+| feature/live-data-corotines               | Corotines and live data
+
 ## Screenshots
 
 <table>
@@ -32,6 +41,9 @@
 |-------------------------------|------------------------------
 | Jetpack Compose               | ✓
 | Kotlin Flow                   | ✓
+| Corotines                     | ✓
+| Live data                     | ✓
+| RxJava                        | ✓
 | Local data persistance        | ✘
 | Infinite Scroll or pagination | ✘                            
 | Detail Screen                 | ✓                            
@@ -70,8 +82,10 @@ Presentation <-> ViewModel <-> UseCase <-> Repository
 
 ## See the code yourself
 
+<h3><b>1. Branch using Flow and corotines</b></h3>
+
 <details>
-  <summary>View Model implementation</summary>
+  <summary>ViewModel layer</summary>
 
   ```kotlin
 @HiltViewModel
@@ -114,7 +128,7 @@ class PokemonsViewModel @Inject constructor(
 </details> 
 
 <details>
-  <summary>Use Case implementation</summary>
+  <summary>UseCase layer</summary>
 
   ```kotlin
 class PokemonsUseCase(
@@ -144,7 +158,7 @@ class PokemonsUseCase(
 </details> 
 
 <details>
-  <summary>Repository implementation</summary>
+  <summary>Repository layer</summary>
 
   ```kotlin
 internal class PokemonRemoteRepository @Inject constructor(
@@ -159,6 +173,205 @@ internal class PokemonRemoteRepository @Inject constructor(
         ResponseApi.Error.Http(e.toErrorMessage())
     } catch (e: IOException) {
         ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+    }
+}
+```
+</details>
+
+<br>
+<h3><b>2. Branch using Live data and corotines</b></h3>
+<details>
+  <summary>ViewModel layer</summary>
+
+  ```kotlin
+@HiltViewModel
+class PokemonsViewModel @Inject constructor(
+    private val pokemonUseCase: PokemonsUseCase,
+) : ViewModel() {
+    private val _pokemonsState = MutableLiveData<PokemonsState>(PokemonsState.Loading)
+    val pokemonsState: LiveData<PokemonsState> = _pokemonsState
+
+    init {
+        on(PokemonsEvent.StartRequest)
+    }
+
+    fun on(event: PokemonsEvent) {
+        when (event) {
+            is PokemonsEvent.StartRequest -> getPokemons()
+        }
+    }
+
+    private fun getPokemons() = viewModelScope.launch {
+        _pokemonsState.value = PokemonsState.Loading
+
+        when (val result = pokemonUseCase()) {
+            is RequestResource.Success -> {
+                _pokemonsState.value = PokemonsState.Show(result.data!!)
+            }
+
+            is RequestResource.Error -> {
+                _pokemonsState.value = PokemonsState.TryAgain(result.message!!)
+            }
+        }
+    }
+}
+```
+</details> 
+
+<details>
+  <summary>UseCase layer</summary>
+
+  ```kotlin
+class PokemonsUseCase(
+    private val repository: PokemonApiRepository
+) {
+
+    suspend operator fun invoke(): RequestResource<List<Pokemon>> =
+        when (val pokemons = repository.getPokemons()) {
+            is ResponseApi.Success -> {
+                RequestResource.Success(
+                    pokemons.data
+                        .filter { it.sprites?.hasPicture() == true }
+                        .map { it.copy() })
+            }
+
+            is ResponseApi.Error -> {
+                RequestResource.Error(pokemons.message)
+            }
+        }
+}
+```
+</details> 
+<details>
+  <summary>Repository layer</summary>
+
+  ```kotlin
+internal class PokemonRemoteRepository @Inject constructor(
+    private val api: PokemonApi
+) : PokemonApiRepository {
+
+    override suspend fun getPokemons() = try {
+        val abilityResponse = api.getAbilityResponse(5, 5)
+        ResponseApi.Success(
+            abilityResponse
+                .results
+                .map { api.getAbilityDetails(it.url) }
+                .flatMap { it.pokemon }
+                .mapNotNull { api.getPokemon(it.pokemon.url) }
+        )
+    } catch (e: HttpException) {
+        ResponseApi.Error.Http(e.toErrorMessage())
+    } catch (e: IOException) {
+        ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+    }
+}
+```
+</details>
+<br>
+<h3><b>3. Branch using RxJava and MutableStateFlow</b></h3>
+
+<details>
+  <summary>ViewModel layer</summary>
+
+  ```kotlin
+@HiltViewModel
+class PokemonsViewModel @Inject constructor(
+    private val pokemonUseCase: PokemonsUseCase,
+) : ViewModel() {
+    private val _pokemonsState = MutableStateFlow<PokemonsState>(PokemonsState.Loading)
+    internal val pokemonsState = _pokemonsState.asStateFlow()
+
+    init {
+        on(PokemonsEvent.StartRequest)
+    }
+
+    internal fun on(event: PokemonsEvent) {
+        when (event) {
+            is PokemonsEvent.StartRequest -> {
+                getPokemons()
+            }
+        }
+    }
+
+    private fun getPokemons() = viewModelScope.launch {
+        pokemonUseCase()
+            .asFlow()
+            .collect { currentResult ->
+                when (currentResult) {
+                    is RequestResource.Success -> {
+                        _pokemonsState.value = PokemonsState.Show(currentResult.data!!)
+                    }
+
+                    is RequestResource.Error -> {
+                        _pokemonsState.value = PokemonsState.TryAgain(currentResult.message!!)
+                    }
+
+                    is RequestResource.Loading -> {
+                        _pokemonsState.value = PokemonsState.Loading
+                    }
+                }
+            }
+    }
+}
+```
+</details>
+<details>
+  <summary>Use case layer</summary>
+
+  ```kotlin
+class PokemonsUseCase(
+    private val repository: PokemonApiRepository
+) {
+
+    operator fun invoke(): Observable<RequestResource<List<Pokemon>>> {
+        return Observable.concat(
+            Observable.just(RequestResource.Loading()),
+            repository.getPokemons()
+                .map { response ->
+                    when (response) {
+                        is ResponseApi.Success -> RequestResource.Success(
+                            response.data
+                                .filter { it.sprites?.hasPicture() == true }
+                                .map { it.copy() }
+                        )
+
+                        is ResponseApi.Error -> RequestResource.Error(response.message)
+                    }
+                }
+                .toObservable()
+        )
+    }
+}
+```
+</details> 
+
+<details>
+  <summary>Repository layer</summary>
+
+  ```kotlin
+internal class PokemonRemoteRepository @Inject constructor(
+    private val api: PokemonApi
+) : PokemonApiRepository {
+
+    override fun getPokemons(): Single<ResponseApi<List<Pokemon>>> {
+        return Single.fromCallable {
+            try {
+                val abilityResponse = api.getAbilityResponse(5, 5).blockingGet()
+                val abilityDetails = abilityResponse.results
+                    .map { api.getAbilityDetails(it.url).blockingGet() }
+                val pokemons = abilityDetails
+                    .flatMap { it.pokemon }
+                    .mapNotNull { api.getPokemon(it.pokemon.url).blockingGet() }
+
+                ResponseApi.Success(pokemons)
+            } catch (e: HttpException) {
+                ResponseApi.Error.Http(e.toErrorMessage())
+            } catch (e: IOException) {
+                ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+            } catch (e: Exception) {
+                ResponseApi.Error.Unknown(e, UiText.Dynamic(e.message ?: "Unknown error"))
+            }
+        }.subscribeOn(Schedulers.io())
     }
 }
 ```
