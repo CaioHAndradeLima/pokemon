@@ -64,15 +64,20 @@ fun PokemonScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Black.copy(alpha) )
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color.Black.copy(
+                        alpha
+                    )
+                )
             )
         },
         content = { padding ->
-            when(state.value) {
+            when (state.value) {
                 is PokemonState.Loading -> ProgressComponent()
                 is PokemonState.Show -> PokemonComponent((state.value as PokemonState.Show).pokemon) {
                     alpha = it
                 }
+
                 is PokemonState.TryAgain -> Surface(modifier = Modifier.padding(padding)) {
                     TryAgainComponent(((state.value as PokemonState.TryAgain).errorMessage))
                 }

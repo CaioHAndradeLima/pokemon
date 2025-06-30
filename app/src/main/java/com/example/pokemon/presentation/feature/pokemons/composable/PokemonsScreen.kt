@@ -18,9 +18,8 @@ import com.example.pokemon.common.ui.DefaultTopBar
 import com.example.pokemon.common.ui.ProgressComponent
 import com.example.pokemon.common.ui.TryAgainComponent
 import com.example.pokemon.data.model.Pokemon
-import com.example.pokemon.presentation.feature.pokemons.composable.PokemonItem
-import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsViewModel
 import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsState
+import com.example.pokemon.presentation.feature.pokemons.viewmodel.PokemonsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

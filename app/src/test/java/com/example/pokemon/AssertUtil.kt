@@ -10,7 +10,7 @@ fun assertSameClass(first: Any?, second: Any?) {
     )
 }
 
-inline fun <reified T: Any> assertInstanceOf(any: Any?) {
+inline fun <reified T : Any> assertInstanceOf(any: Any?) {
     if (any !is T) {
         TestCase.fail("Expected instance of ${any!!.javaClass.simpleName}, but found ${T::class.simpleName}")
     }

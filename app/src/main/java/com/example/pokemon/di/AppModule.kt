@@ -43,6 +43,7 @@ object AppModule {
     fun providePokemonsUseCase(repository: PokemonApiRepository) = PokemonsUseCase(
         repository = repository,
     )
+
     @Provides
     @Singleton
     fun providePokemonUseCase(repository: PokemonApiRepository) = PokemonUseCase(
@@ -52,6 +53,7 @@ object AppModule {
     //viewmodel
     @Provides
     fun providePokemonsViewModel(case: PokemonsUseCase) = PokemonsViewModel(case)
+
     @Provides
     fun providePokemonViewModel(case: PokemonUseCase) = PokemonViewModel(case)
 }

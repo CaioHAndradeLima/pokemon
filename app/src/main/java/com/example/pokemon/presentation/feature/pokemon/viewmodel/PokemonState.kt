@@ -8,7 +8,7 @@ sealed class PokemonState {
         val pokemon: Pokemon
     ) : PokemonState()
 
-    object Loading: PokemonState()
-    data class TryAgain(val errorMessage: UiText): PokemonState()
+    object Loading : PokemonState()
+    data class TryAgain(val errorMessage: UiText) : PokemonState()
 }
 

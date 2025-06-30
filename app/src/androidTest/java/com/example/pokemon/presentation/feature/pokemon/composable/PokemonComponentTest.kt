@@ -27,10 +27,26 @@ class PokemonComponentTest {
 
         composeTestRule.onNodeWithText(pokemon.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(pokemon.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.base_experience, pokemon.baseExperience.toString())).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.height, pokemon.height.toString())).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.weight, pokemon.weight.toString())).assertExists()
-        composeTestRule.onNodeWithText(context.getString(R.string.specie, pokemon.species!!.name)).assertExists()
+        composeTestRule.onNodeWithText(
+            context.getString(
+                R.string.base_experience,
+                pokemon.baseExperience.toString()
+            )
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(
+                R.string.height,
+                pokemon.height.toString()
+            )
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(
+                R.string.weight,
+                pokemon.weight.toString()
+            )
+        ).assertExists()
+        composeTestRule.onNodeWithText(context.getString(R.string.specie, pokemon.species!!.name))
+            .assertExists()
         composeTestRule.onNodeWithText(context.getString(R.string.movements)).assertExists()
         composeTestRule.onNodeWithText(pokemon.moves!!.first().move.name).assertExists()
     }

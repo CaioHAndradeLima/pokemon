@@ -1,8 +1,8 @@
 package com.example.pokemon.common.route
 
 sealed class ScreenRoute(private val initialRoute: String, private val pathRoute: String? = null) {
-    object Pokemons: ScreenRoute("pokemons")
-    object Pokemon: ScreenRoute("pokemon", pathRoute = "{id}")
+    object Pokemons : ScreenRoute("pokemons")
+    object Pokemon : ScreenRoute("pokemon", pathRoute = "{id}")
 
     internal fun route(): String {
         pathRoute?.let { return@route return "$initialRoute/$pathRoute"; }

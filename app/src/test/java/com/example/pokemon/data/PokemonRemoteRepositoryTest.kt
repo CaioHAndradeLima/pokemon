@@ -1,5 +1,6 @@
 package com.example.pokemon.data
 
+import com.example.pokemon.R
 import com.example.pokemon.common.resource.UiText
 import com.example.pokemon.data.model.Ability
 import com.example.pokemon.data.model.AbilityInfoPokemon
@@ -8,10 +9,10 @@ import com.example.pokemon.data.model.PokemonAbilityResponse
 import com.example.pokemon.data.repository.PokemonApi
 import com.example.pokemon.data.repository.PokemonRemoteRepository
 import com.example.pokemon.provider.provideDefaultPokemonTest
-import com.example.pokemon.R
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
@@ -26,14 +27,8 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemons success`() = runBlocking {
-        // Given
         val abilityResponse = PokemonAbilityResponse(
-            results = listOf(
-                AbilityInfoPokemon(
-                    name = "name1",
-                    url = "url1",
-                ),
-            ),
+            results = listOf(AbilityInfoPokemon(name = "name1", url = "url1")),
             count = 1,
             next = "next",
             previous = "previous",
@@ -42,23 +37,23 @@ class PokemonRemoteRepositoryTest {
         val pokemon1 = provideDefaultPokemonTest()
         val expectedPokemons = listOf(pokemon1)
 
-        coEvery { api.getAbilityResponse(5, 5) } returns abilityResponse
-        coEvery { api.getAbilityDetails("url1") } returns Ability(
-            pokemon = listOf(
-                AbilityPokemonDetail(
-                    pokemon = AbilityInfoPokemon(
-                        name = "name1",
-                        url = "url1",
+        coEvery { api.getAbilityResponse(5, 5) } returns Single.fromCallable { abilityResponse }
+        coEvery { api.getAbilityDetails("url1") } returns Single.fromCallable {
+            Ability(
+                pokemon = listOf(
+                    AbilityPokemonDetail(
+                        pokemon = AbilityInfoPokemon(
+                            name = "name1",
+                            url = "url1"
+                        )
                     )
                 )
             )
-        )
-        coEvery { api.getPokemon("url1") } returns pokemon1
+        }
+        coEvery { api.getPokemon("url1") } returns Single.fromCallable { pokemon1 }
 
-        // When
-        val result = repository.getPokemons()
+        val result = repository.getPokemons().blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Success)
         val data = (result as ResponseApi.Success).data
         Assert.assertEquals(expectedPokemons, data)
@@ -66,13 +61,10 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemons IO exception`() = runBlocking {
-        // Given
         coEvery { api.getAbilityResponse(5, 5) } throws IOException()
 
-        // When
-        val result = repository.getPokemons()
+        val result = repository.getPokemons().blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Error.Connection)
         val error = result as ResponseApi.Error.Connection
         Assert.assertEquals(UiText.Resource(R.string.check_your_internet_connection), error.message)
@@ -80,7 +72,6 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemons HTTP exception`() = runBlocking {
-        // Given
         val message = "Internal Server Error"
         val response = mockk<Response<*>> {
             every { code() } returns 500
@@ -88,10 +79,8 @@ class PokemonRemoteRepositoryTest {
         }
         coEvery { api.getAbilityResponse(5, 5) } throws HttpException(response)
 
-        // When
-        val result = repository.getPokemons()
+        val result = repository.getPokemons().blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Error.Http)
         val error = result as ResponseApi.Error.Http
         Assert.assertEquals(UiText.Dynamic("HTTP 500 $message"), error.message)
@@ -99,16 +88,13 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemon success`() = runBlocking {
-        // Given
         val id = "1"
         val pokemon = provideDefaultPokemonTest()
 
-        coEvery { api.getPokemonById(id) } returns pokemon
+        coEvery { api.getPokemonById(id) } returns Single.fromCallable { pokemon }
 
-        // When
-        val result = repository.getPokemon(id)
+        val result = repository.getPokemon(id).blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Success)
         val data = (result as ResponseApi.Success).data
         Assert.assertEquals(pokemon, data)
@@ -116,14 +102,11 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemon IO exception`() = runBlocking {
-        // Given
         val id = "1"
         coEvery { api.getPokemonById(id) } throws IOException()
 
-        // When
-        val result = repository.getPokemon(id)
+        val result = repository.getPokemon(id).blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Error.Connection)
         val error = result as ResponseApi.Error.Connection
         Assert.assertEquals(UiText.Resource(R.string.check_your_internet_connection), error.message)
@@ -131,7 +114,6 @@ class PokemonRemoteRepositoryTest {
 
     @Test
     fun `test getPokemon HTTP exception`() = runBlocking {
-        // Given
         val id = "1"
         val message = "Not Found"
         val response = mockk<Response<*>> {
@@ -141,10 +123,8 @@ class PokemonRemoteRepositoryTest {
 
         coEvery { api.getPokemonById(id) } throws HttpException(response)
 
-        // When
-        val result = repository.getPokemon(id)
+        val result = repository.getPokemon(id).blockingGet()
 
-        // Then
         Assert.assertTrue(result is ResponseApi.Error.Http)
         val error = result as ResponseApi.Error.Http
         Assert.assertEquals(UiText.Dynamic("HTTP 404 $message"), error.message)

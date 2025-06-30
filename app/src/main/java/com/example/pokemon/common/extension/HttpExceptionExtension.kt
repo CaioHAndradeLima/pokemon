@@ -5,7 +5,7 @@ import com.example.pokemon.common.resource.UiText
 import retrofit2.HttpException
 
 fun HttpException.toErrorMessage(): UiText {
-    return if(localizedMessage.isNullOrEmpty()) {
+    return if (localizedMessage.isNullOrEmpty()) {
         UiText.Resource(R.string.an_unexpected_error_occurred)
     } else {
         UiText.Dynamic(localizedMessage)

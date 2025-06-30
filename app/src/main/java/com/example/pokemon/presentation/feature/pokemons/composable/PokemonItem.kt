@@ -32,9 +32,11 @@ fun PokemonItem(
             CoilImageComponent(
                 imageUrl = pokemon.sprites!!.bestFrontImageUrl!!,
             )
-            Spacer(modifier = Modifier
-                .width(8.dp)
-                .height(8.dp))
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp)
+                    .height(8.dp)
+            )
             Text(text = pokemon.name)
         }
     }

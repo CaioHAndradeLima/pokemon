@@ -8,7 +8,7 @@ sealed class UiText {
     data class Resource(@StringRes val id: Int) : UiText()
 
     fun toString(context: Context): String {
-        return when(this) {
+        return when (this) {
             is Dynamic -> this.text
             is Resource -> context.resources.getString(id)
         }

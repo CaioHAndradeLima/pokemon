@@ -12,6 +12,7 @@ import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonViewMod
 import com.example.pokemon.provider.provideDefaultPokemonTest
 import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -30,9 +31,7 @@ class PokemonScreenTest {
         val id = "1"
         val pokemon = provideDefaultPokemonTest()
 
-        every { useCase.invoke(id) } returns flowOf(
-            RequestResource.Success(pokemon)
-        )
+        every { useCase.invoke(id) } returns Observable.just(RequestResource.Success(pokemon))
 
         composeTestRule.setContent {
             PokemonScreen(id = id, navController = mockk(), pokemonViewModel = viewModel)
@@ -47,10 +46,8 @@ class PokemonScreenTest {
         val useCase = mockk<PokemonUseCase>()
         val viewModel = PokemonViewModel(useCase)
         val id = "1"
-        every { useCase.invoke(id) } returns flowOf(
-            RequestResource.Error(
-                message = UiText.Dynamic(errorMessage)
-            )
+        every { useCase.invoke(id) } returns Observable.just(
+            RequestResource.Error(UiText.Dynamic(errorMessage))
         )
 
         composeTestRule.setContent {

@@ -30,6 +30,7 @@ fun TryAgainComponent(
                 modifier = Modifier
                     .fillMaxWidth()
             )
+
             else -> Text(
                 text = stringResource(R.string.try_again_message),
                 color = MaterialTheme.colorScheme.error,
@@ -39,8 +40,10 @@ fun TryAgainComponent(
             )
         }
 
-        Spacer(modifier = Modifier
-            .width(8.dp)
-            .height(8.dp))
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
+                .height(8.dp)
+        )
     }
 }
