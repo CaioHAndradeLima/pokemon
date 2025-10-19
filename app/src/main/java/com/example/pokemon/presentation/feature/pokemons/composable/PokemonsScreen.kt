@@ -11,6 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +31,13 @@ fun PokemonsScreen(
 ) {
     val state by viewModel.pokemonsState.observeAsState(PokemonsState.Loading)
 
-    val isHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val configuration = LocalConfiguration.current
+
+    val columnsSize by remember(configuration.orientation) {
+        mutableStateOf(
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+        )
+    }
 
     Scaffold(
         topBar = { DefaultTopBar() },
@@ -44,7 +52,7 @@ fun PokemonsScreen(
                     is PokemonsState.Show -> LazyVerticalGrid(
                         modifier = Modifier
                             .fillMaxSize(),
-                        columns = GridCells.Fixed(if (isHorizontal) 3 else 2)
+                        columns = GridCells.Fixed(columnsSize)
                     ) {
                         val pokemons = (state as PokemonsState.Show).pokemons
                         items(pokemons.size) { index ->
