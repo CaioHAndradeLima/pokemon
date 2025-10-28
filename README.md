@@ -8,9 +8,8 @@
 
 ## Pokemon
 
-this project has 4 different branches addressing concepts such as HotFlow, ColdFlow, UnitTests,
-EspressoTests and CI/CD containing each branch a different way to implement using the most used
-android libraries in the world such as
+
+[![Pokemon](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml/badge.svg)](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml)
 
 ✓ JetpackCompose
 ✓ Flow
@@ -37,53 +36,19 @@ android libraries in the world such as
   </tr>
 </table>
 
+## 4 Branches: One result
+
+this project has 4 different branches addressing concepts such as HotFlow, ColdFlow, UnitTests,
+EspressoTests and CI/CD containing each branch a different way to implement using the most used
+android libraries in the world such as
+
+
 | Branch                      | implementation using |
 |-----------------------------|----------------------|
 | main                        | MutableStateFlow     |
 | feature/rx                  | RxJava               |
 | feature/live-data-corotines | LiveData             |
 | feature/cold_flow           | StateFlow            |
-
-## Package organization
-
-| Packages     | description                                         |
-|--------------|-----------------------------------------------------|
-| Common       | Common files for any module/package                 |
-| Data         | Define contract interface and repository layer      |
-| Domain       | Repository implementation and application use cases |
-| Presentation | UI Layer and ViewModel                              |
-| di           | Dependency Injection setup                          |
-| theme        | Define colors, styles and more                      |
-
-## Architecture Directory Organization
-
-```
-presentation
-    - feature
-        -- pokemon
-            --- composable
-            --- viewmodel
-        -- pokemons
-            --- composable
-            --- viewmodel
-domain
-    - usecase
-    
-data
-    - model
-    - repository
-    
-common
-    - extension
-    - network
-    - resource
-    - route
-    - ui
-    
-ui
-    - theme
-
-```
 
 ## See the code yourself
 
@@ -488,10 +453,64 @@ internal class PokemonRemoteRepository @Inject constructor(
 
 </details>
 
-## Continuous integration enabled
+## 🔄 Continuous integration enabled
 
-any pull request opened will run the build, unit tests and espresso tests. See
-the [CI algorithm here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
+[![Pokemon](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml/badge.svg)](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml)
+
+‍💻 **Code Push** → Triggers Continuous Integration <br>
+🧪 **Run Build** → Executes `./gradlew assemble` <br>
+🧹 **Run Unit Tests** → Runs Unit tests and fail when tests fail <br>
+🏗️  **Run Espresso Tests in real Device** → Runs Espresso tests in real device and fail when tests fail <br>
+
+
+[See Workflow here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
+
+## Architecture Directory Organization
+
+| Directory    | description                                         |
+|--------------|-----------------------------------------------------|
+| Common       | Common files for any module/package                 |
+| Data         | Define contract interface and repository layer      |
+| Domain       | Repository implementation and application use cases |
+| Presentation | UI Layer and ViewModel                              |
+| di           | Dependency Injection setup                          |
+| theme        | Define colors, styles and more                      |
+
+<details>
+  <summary>Directory Structure</summary>
+
+  ```text
+📂 presentation
+│
+└── 📂 feature
+    ├── 📂 pokemon
+    │   ├── 📂 composable
+    │   └── 📂 viewmodel
+    │
+    └── 📂 pokemons
+        ├── 📂 composable
+        └── 📂 viewmodel
+
+📂 domain
+└── 📂 usecase
+
+📂 data
+├── 📂 model
+└── 📂 repository
+
+📂 common
+├── 📂 extension
+├── 📂 network
+├── 📂 resource
+├── 📂 route
+└── 📂 ui
+
+📂 ui
+└── 📂 theme
+
+```
+
+</details>
 
 </body>
 </html>
