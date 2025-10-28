@@ -12,24 +12,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokemon.R
 import com.example.pokemon.common.ui.ProgressComponent
 import com.example.pokemon.common.ui.TryAgainComponent
-import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonEvent
 import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonState
 import com.example.pokemon.presentation.feature.pokemon.viewmodel.PokemonViewModel
 
@@ -40,15 +35,8 @@ fun PokemonScreen(
     navController: NavHostController,
     pokemonViewModel: PokemonViewModel = hiltViewModel(),
 ) {
-    val state = pokemonViewModel.pokemonState.collectAsState()
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val state by remember(id) { pokemonViewModel.getPokemonStateFlow(id) }.collectAsStateWithLifecycle(PokemonState.Loading)
     var alpha by remember { mutableStateOf(0.1F) }
-    LaunchedEffect(key1 = id) {
-        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            pokemonViewModel.on(PokemonEvent.Find(id))
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,13 +56,13 @@ fun PokemonScreen(
             )
         },
         content = { padding ->
-            when(state.value) {
+            when(state) {
                 is PokemonState.Loading -> ProgressComponent()
-                is PokemonState.Show -> PokemonComponent((state.value as PokemonState.Show).pokemon) {
+                is PokemonState.Show -> PokemonComponent((state as PokemonState.Show).pokemon) {
                     alpha = it
                 }
                 is PokemonState.TryAgain -> Surface(modifier = Modifier.padding(padding)) {
-                    TryAgainComponent(((state.value as PokemonState.TryAgain).errorMessage))
+                    TryAgainComponent(((state as PokemonState.TryAgain).errorMessage))
                 }
             }
         }

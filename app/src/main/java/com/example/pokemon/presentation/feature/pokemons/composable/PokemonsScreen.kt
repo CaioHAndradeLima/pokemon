@@ -9,13 +9,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokemon.common.ui.DefaultTopBar
 import com.example.pokemon.common.ui.ProgressComponent
 import com.example.pokemon.common.ui.TryAgainComponent
@@ -29,7 +29,7 @@ fun PokemonsScreen(
     onClick: (Pokemon) -> Unit,
     viewModel: PokemonsViewModel = hiltViewModel()
 ) {
-    val state by viewModel.pokemonsState.collectAsState()
+    val state by remember { viewModel.pokemonsState }.collectAsStateWithLifecycle()
 
     val configuration = LocalConfiguration.current
 

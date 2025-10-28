@@ -5,41 +5,24 @@ import androidx.lifecycle.viewModelScope
 import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.domain.usecase.PokemonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonViewModel @Inject constructor(
     private val pokemonUseCase: PokemonUseCase,
 ) : ViewModel() {
-    private val _pokemonState = MutableStateFlow<PokemonState>(PokemonState.Loading)
-    internal val pokemonState = _pokemonState.asStateFlow()
 
-    internal fun on(event: PokemonEvent) {
-        when (event) {
-            is PokemonEvent.Find -> {
-                getPokemon(event.id)
+    internal fun getPokemonStateFlow(id: String): Flow<PokemonState> {
+        return pokemonUseCase(id).map { result ->
+            when (result) {
+                is RequestResource.Loading -> PokemonState.Loading
+                is RequestResource.Success -> PokemonState.Show(result.data!!)
+                is RequestResource.Error -> PokemonState.TryAgain(result.message!!)
             }
         }
-    }
-
-    private fun getPokemon(id: String) {
-        pokemonUseCase(id).onEach { currentResult ->
-
-            when (currentResult) {
-                is RequestResource.Success -> {
-                    _pokemonState.value = PokemonState.Show(currentResult.data!!)
-                }
-                is RequestResource.Error -> {
-                    _pokemonState.value = PokemonState.TryAgain(currentResult.message!!)
-                }
-                is RequestResource.Loading -> {
-                    _pokemonState.value = PokemonState.Loading
-                }
-            }
-        }.launchIn(viewModelScope)
     }
 }
