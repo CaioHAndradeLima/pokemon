@@ -36,15 +36,17 @@ jobs:
       - name: Generate Coverage Badge
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          generate-branches-badges: true
+          generate-branches-badges: false
           jacoco-csv-file: app/build/reports/jacoco/testDebugUnitTestCoverage.csv
           generate-coverage-badge: true
+
 
       - name: Upload badge to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: coverage-badge
           path: .github/badges/jacoco.svg
+          overwrite: true
 
   ui-tests:
     name: Run Espresso Tests
