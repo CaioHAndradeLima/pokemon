@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokemon"
+        android:enableOnBackInvokedCallback="true"
         android:name=".PokemonApplication"
         tools:targetApi="31">
         <activity

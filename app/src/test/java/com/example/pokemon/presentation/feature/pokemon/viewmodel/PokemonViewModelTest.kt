@@ -1,5 +1,6 @@
 package com.example.pokemon.presentation.feature.pokemon.viewmodel
 
+import com.example.pokemon.assertInstanceOf
 import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.common.resource.UiText
 import com.example.pokemon.data.model.Pokemon
@@ -11,7 +12,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
@@ -51,14 +54,17 @@ class PokemonViewModelTest {
         // Arrange
         val pokemonMock = provideDefaultPokemonTest()
         val successResult = RequestResource.Success(pokemonMock)
-        coEvery { pokemonUseCase(any()) } returns flowOf(successResult)
+        coEvery { pokemonUseCase(any()) } returns flow {
+            emit(RequestResource.Loading())
+            emit(successResult)
+        }
 
-        // Act
-        pokemonViewModel.on(PokemonEvent.Find("1"))
-
+        val state = pokemonViewModel.getPokemonStateFlow("1").toList()
         // Assert
-        assertTrue(pokemonViewModel.pokemonState.value is PokemonState.Show)
-        assertEquals(pokemonMock, (pokemonViewModel.pokemonState.value as PokemonState.Show).pokemon)
+        assertEquals(2, state.size)
+        assertEquals(state.first(), PokemonState.Loading)
+        assertInstanceOf<PokemonState.Show>(state.last())
+        assertEquals(pokemonMock, (state.last() as PokemonState.Show).pokemon)
     }
 
     @Test
@@ -66,26 +72,20 @@ class PokemonViewModelTest {
         // Arrange
         val uiText = UiText.Dynamic("Some error message")
         val errorResult = RequestResource.Error<Pokemon>(message = uiText)
-        coEvery { pokemonUseCase(any()) } returns flowOf(errorResult)
+        coEvery { pokemonUseCase(any()) } returns flow {
+            emit(RequestResource.Loading())
+            emit(errorResult)
+        }
 
         // Act
-        pokemonViewModel.on(PokemonEvent.Find("1"))
+        val state = pokemonViewModel.getPokemonStateFlow("1").toList()
 
         // Assert
-        assertTrue(pokemonViewModel.pokemonState.value is PokemonState.TryAgain)
-        assertEquals(uiText, (pokemonViewModel.pokemonState.value as PokemonState.TryAgain).errorMessage)
-    }
-
-    @Test
-    fun `should update pokemonState on loading during pokemon retrieval`() = runBlockingTest {
-        // Arrange
-        val loadingResult = RequestResource.Loading<Pokemon>()
-        coEvery { pokemonUseCase(any()) } returns flowOf(loadingResult)
-
-        // Act
-        pokemonViewModel.on(PokemonEvent.Find("1"))
-
-        // Assert
-        assertTrue(pokemonViewModel.pokemonState.value is PokemonState.Loading)
+        assertEquals(2, state.size)
+        assertEquals(state.first(), PokemonState.Loading)
+        assertEquals(
+            uiText,
+            (state.last() as PokemonState.TryAgain).errorMessage
+        )
     }
 }
