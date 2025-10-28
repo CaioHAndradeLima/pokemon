@@ -31,7 +31,13 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest jacocoTestReport
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: app/build/reports/jacoco/html
 
   ui-tests:
     name: Run Espresso Tests
