@@ -16,7 +16,8 @@ project.afterEvaluate {
         reports {
             xml.required.set(true)
             html.required.set(true)
-            csv.required = true
+            csv.required.set(true)
+            csv.outputLocation.set(file("${buildDir}/reports/jacoco/testDebugUnitTestCoverage.csv"))
             html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
         }
 
@@ -30,15 +31,23 @@ project.afterEvaluate {
                 excludes: fileFilter
         )
 
-        sourceDirectories.setFrom(files([
+        sourceDirectories.setFrom(files(
                 "$projectDir/src/main/java",
                 "$projectDir/src/main/kotlin"
-        ]))
-
-        classDirectories.setFrom(files([debugTree]))
-        executionData.setFrom(fileTree(buildDir).include(
-                "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                "jacoco/testDebugUnitTest.exec"
         ))
+        classDirectories.setFrom(fileTree(
+                dir: "$buildDir/tmp/kotlin-classes/debug",
+                excludes: [
+                        '**/R.class',
+                        '**/R$*.class',
+                        '**/BuildConfig.*',
+                        '**/Manifest*.*',
+                        '**/*Test*.*'
+                ]
+        ))
+        executionData.setFrom(fileTree(dir: buildDir, includes: [
+                'jacoco/testDebugUnitTest.exec',
+                'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec'
+        ]))
     }
 }
