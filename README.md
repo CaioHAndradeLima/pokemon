@@ -6,18 +6,21 @@
 </head>
 <body>
 
-## Android Pokemon project
+## Pokemon
 
-this project has 3 different versions of most used android library in the world such as Flow/Rx/LiveData/corotines.
+this project has 4 different branches addressing concepts such as HotFlow, ColdFlow, UnitTests,
+EspressoTests and CI/CD containing each branch a different way to implement using the most used
+android libraries in the world such as
 
-
-| Branch                       | implementation
-|-------------------------------|------------------------------
-| main               | Kotlin Flow
-| feature/rx               | RxJava
-| feature/live-data-corotines               | Corotines and live data
-
-## Screenshots
+✓ JetpackCompose
+✓ Flow
+✓ Retrofit
+✓ RxJava/Kotlin
+✓ StateFlow
+✓ SharedFlow
+✓ LiveData
+✓ Coroutines
+✓ Clean Architecture
 
 <table>
   <tr>
@@ -34,56 +37,58 @@ this project has 3 different versions of most used android library in the world 
   </tr>
 </table>
 
-## Pokemon
-
-
-| Feature                       | implementation
-|-------------------------------|------------------------------
-| Jetpack Compose               | ✓
-| Kotlin Flow                   | ✓
-| Corotines                     | ✓
-| Live data                     | ✓
-| RxJava                        | ✓
-| Local data persistance        | ✘
-| Infinite Scroll or pagination | ✘                            
-| Detail Screen                 | ✓                            
-| Transition Animation          | ✘                            
-| Image Internal Cache          | ✓                            
-| Horizontal adaptation         | ✓                            
-| Dependency Injection          | ✓                            
-| Good Test Coverage            | ✓                            
-| Unit Tests                    | ✓                            
-| UI Tests                      | ✓                            
-
+| Branch                      | implementation using |
+|-----------------------------|----------------------|
+| main                        | MutableStateFlow     |
+| feature/rx                  | RxJava               |
+| feature/live-data-corotines | LiveData             |
+| feature/cold_flow           | StateFlow            |
 
 ## Package organization
 
-| Packages     | description
-|--------------|------------------------------
-| Common       | Common files for any module/package                            
-| Data         | Define contract interface and repository layer                           
-| Domain       | Repository implementation and application use cases                  
-| Presentation | UI Layer and ViewModel                
-| di           | Dependency Injection setup                         
-| theme        | Define colors, styles and more                            
+| Packages     | description                                         |
+|--------------|-----------------------------------------------------|
+| Common       | Common files for any module/package                 |
+| Data         | Define contract interface and repository layer      |
+| Domain       | Repository implementation and application use cases |
+| Presentation | UI Layer and ViewModel                              |
+| di           | Dependency Injection setup                          |
+| theme        | Define colors, styles and more                      |
 
+## Architecture Directory Organization
 
-## Architecture organization
+```
+presentation
+    - feature
+        -- pokemon
+            --- composable
+            --- viewmodel
+        -- pokemons
+            --- composable
+            --- viewmodel
+domain
+    - usecase
+    
+data
+    - model
+    - repository
+    
+common
+    - extension
+    - network
+    - resource
+    - route
+    - ui
+    
+ui
+    - theme
 
-Presentation <-> ViewModel <-> UseCase <-> Repository
-
-## App Features
-
-| Feature      | Description
-|--------------|------------------------------
-| Pokemons     | Show a list of pokemons
-| Pokemon      | Show pokemon details
-
+```
 
 ## See the code yourself
 
-<h3><b>1. Branch using Flow and corotines</b></h3>
-
+<h3><b>1. Branch Main</b></h3>
+implementation using MutableStateFlow and Flow to thread management
 <details>
   <summary>ViewModel layer</summary>
 
@@ -125,6 +130,7 @@ class PokemonsViewModel @Inject constructor(
     }
 }
 ```
+
 </details> 
 
 <details>
@@ -143,8 +149,8 @@ class PokemonsUseCase(
                 emit(
                     RequestResource.Success(
                         pokemons.data
-                        .filter { it.sprites?.hasPicture() == true }
-                        .map { it.copy() })
+                            .filter { it.sprites?.hasPicture() == true }
+                            .map { it.copy() })
                 )
             }
 
@@ -155,6 +161,7 @@ class PokemonsUseCase(
     }
 }
 ```
+
 </details> 
 
 <details>
@@ -176,10 +183,12 @@ internal class PokemonRemoteRepository @Inject constructor(
     }
 }
 ```
+
 </details>
 
 <br>
-<h3><b>2. Branch using Live data and corotines</b></h3>
+<h3><b>2. Branch feature/live-data-corotines</b></h3>
+MutableLiveData and classic coroutines
 <details>
   <summary>ViewModel layer</summary>
 
@@ -216,6 +225,7 @@ class PokemonsViewModel @Inject constructor(
     }
 }
 ```
+
 </details> 
 
 <details>
@@ -241,6 +251,7 @@ class PokemonsUseCase(
         }
 }
 ```
+
 </details> 
 <details>
   <summary>Repository layer</summary>
@@ -266,10 +277,11 @@ internal class PokemonRemoteRepository @Inject constructor(
     }
 }
 ```
+
 </details>
 <br>
-<h3><b>3. Branch using RxJava and MutableStateFlow</b></h3>
-
+<h3><b>3. Branch feature/rx </b></h3>
+RxJava and MutableStateFlow
 <details>
   <summary>ViewModel layer</summary>
 
@@ -314,6 +326,7 @@ class PokemonsViewModel @Inject constructor(
     }
 }
 ```
+
 </details>
 <details>
   <summary>Use case layer</summary>
@@ -343,6 +356,7 @@ class PokemonsUseCase(
     }
 }
 ```
+
 </details> 
 
 <details>
@@ -375,11 +389,109 @@ internal class PokemonRemoteRepository @Inject constructor(
     }
 }
 ```
+
+</details>
+
+<h3><b>4. Branch feature/cold_flow </b></h3>
+StateFlow, stateIn, collectWithLifeCycle
+<details>
+  <summary>ViewModel layer</summary>
+
+  ```kotlin
+@HiltViewModel
+class PokemonsViewModel @Inject constructor(
+    pokemonUseCase: PokemonsUseCase,
+) : ViewModel() {
+
+    internal val pokemonsState = pokemonUseCase()
+        .map { result ->
+            when (result) {
+                is RequestResource.Loading -> PokemonsState.Loading
+                is RequestResource.Success -> PokemonsState.Show(result.data!!)
+                is RequestResource.Error -> PokemonsState.TryAgain(result.message!!)
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = PokemonsState.Loading
+        )
+}
+```
+
+</details>
+<details>
+  <summary>Use case layer</summary>
+
+  ```kotlin
+class PokemonsUseCase(
+    private val repository: PokemonApiRepository
+) {
+
+    operator fun invoke(): Flow<RequestResource<List<Pokemon>>> = flow {
+        emit(RequestResource.Loading())
+
+        when (val pokemons = repository.getPokemons()) {
+            is ResponseApi.Success -> {
+                emit(
+                    RequestResource.Success(
+                    pokemons.data
+                        .filter { it.sprites?.hasPicture() == true }
+                        .map { it.copy() }
+                ))
+            }
+
+            is ResponseApi.Error -> {
+                emit(RequestResource.Error(pokemons.message))
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+}
+```
+
+</details> 
+
+<details>
+  <summary>Repository layer</summary>
+
+  ```kotlin
+internal class PokemonRemoteRepository @Inject constructor(
+    private val api: PokemonApi
+) : PokemonApiRepository {
+
+    override suspend fun getPokemons() = try {
+        val abilityResponse = api.getAbilityResponse(5, 5)
+        ResponseApi.Success(
+            abilityResponse
+                .results
+                .map { api.getAbilityDetails(it.url) }
+                .flatMap { it.pokemon }
+                .mapNotNull { api.getPokemon(it.pokemon.url) }
+        )
+    } catch (e: HttpException) {
+        ResponseApi.Error.Http(e.toErrorMessage())
+    } catch (e: IOException) {
+        ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+    }
+
+    override suspend fun getPokemon(id: String) = try {
+        ResponseApi.Success(
+            api.getPokemonById(id)
+        )
+    } catch (e: HttpException) {
+        ResponseApi.Error.Http(e.toErrorMessage())
+    } catch (e: IOException) {
+        ResponseApi.Error.Connection(UiText.Resource(R.string.check_your_internet_connection))
+    }
+}
+```
+
 </details>
 
 ## Continuous integration enabled
 
-any pull request opened will run the build, unit tests and espresso tests. See the [CI algoritm here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
+any pull request opened will run the build, unit tests and espresso tests. See
+the [CI algoritm here](https://github.com/CaioHAndradeLima/pokemon/blob/main/.github/workflows/android.yml)
 
 </body>
 </html>
