@@ -39,12 +39,21 @@ jobs:
           name: coverage-report
           path: app/build/reports/jacoco/html
 
+      - name: Run Unit Tests with Coverage
+        run: ./gradlew testDebugUnitTest jacocoTestReport
+
       - name: Generate Coverage Badge
         uses: cicirello/jacoco-badge-generator@v2
         with:
           generate-branches-badges: true
           jacoco-csv-file: app/build/reports/jacoco/testDebugUnitTestCoverage.csv
           generate-coverage-badge: true
+
+      - name: Upload badge to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-badge
+          path: .github/badges/jacoco.svg
 
   ui-tests:
     name: Run Espresso Tests
