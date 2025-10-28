@@ -40,7 +40,7 @@ jobs:
           path: app/build/reports/jacoco/html
 
       - name: Run Unit Tests with Coverage
-        run: ./gradlew testDebugUnitTest jacocoTestReport
+        run: ./gradlew clean testDebugUnitTest jacocoTestReport
 
       - name: Generate Coverage Badge
         uses: cicirello/jacoco-badge-generator@v2
