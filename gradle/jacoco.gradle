@@ -56,3 +56,23 @@ project.afterEvaluate {
         ]))
     }
 }
+
+task jacocoAndroidReport(type: JacocoReport) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for Android instrumentation tests"
+    dependsOn("connectedDebugAndroidTest")
+    // Files for instrumentation tests
+    def coverageFile = fileTree(dir: "$buildDir/outputs/code-coverage/connected", includes: ["*.ec"])
+    def classesDir = fileTree(dir: "$buildDir/intermediates/javac/debug/classes", excludes: ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*'])
+    def sourceDirs = files(["src/main/java"])
+
+    executionData(coverageFile)
+    sourceDirectories.setFrom(sourceDirs)
+    classDirectories.setFrom(classesDir)
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
