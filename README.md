@@ -10,6 +10,7 @@
 
 
 [![Pokemon](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml/badge.svg)](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml)
+![Coverage](.github/badges/jacoco.svg)
 
 ✓ JetpackCompose
 ✓ Flow
@@ -456,6 +457,7 @@ internal class PokemonRemoteRepository @Inject constructor(
 ## 🔄 Continuous integration enabled
 
 [![Pokemon](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml/badge.svg)](https://github.com/CaioHAndradeLima/Pokemon/actions/workflows/android.yml)
+![Coverage](.github/badges/jacoco.svg)
 
 ‍💻 **Code Push** → Triggers Continuous Integration <br>
 🧪 **Run Build** → Executes `./gradlew assemble` <br>
