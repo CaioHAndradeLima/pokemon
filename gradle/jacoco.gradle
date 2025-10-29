@@ -21,16 +21,6 @@ project.afterEvaluate {
             html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
         }
 
-        def fileFilter = [
-                '**/R.class', '**/R$*.class', '**/BuildConfig.*',
-                '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*'
-        ]
-
-        def debugTree = fileTree(
-                dir: "$buildDir/tmp/kotlin-classes/debug",
-                excludes: fileFilter
-        )
-
         sourceDirectories.setFrom(files(
                 "$projectDir/src/main/java",
                 "$projectDir/src/main/kotlin"
@@ -42,7 +32,22 @@ project.afterEvaluate {
                         '**/R$*.class',
                         '**/BuildConfig.*',
                         '**/Manifest*.*',
-                        '**/*Test*.*'
+                        '**/*Test*.*',
+                        '**/*Activity*.*',
+                        '**/*Fragment*.*',
+                        '**/*Composable*.*',
+                        '**/*Component*.*',
+                        '**/*Screen*.*',
+                        '**/ui/**/*.*',
+                        '**/hilt_aggregated_deps/*.*',
+                        '**/codegen/*.*',
+                        '**/di/*.*',
+                        '**/*_Factory*.java',
+                        '**/*_HiltModules*.java',
+                        '**/*_HiltModules_KeyModule_*.java',
+                        '**/*_GeneratedInjector.*',
+                        '**/PokemonApplication.*',
+                        '**/data/*.*',
                 ]
         ))
         executionData.setFrom(fileTree(dir: buildDir, includes: [

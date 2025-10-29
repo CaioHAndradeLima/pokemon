@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.pokemon.common.ui.DefaultTopBar
+import com.example.pokemon.common.ui.DefaultTopBarComponent
 import com.example.pokemon.common.ui.ProgressComponent
 import com.example.pokemon.common.ui.TryAgainComponent
 import com.example.pokemon.data.model.Pokemon
@@ -40,7 +40,7 @@ fun PokemonsScreen(
     }
 
     Scaffold(
-        topBar = { DefaultTopBar() },
+        topBar = { DefaultTopBarComponent() },
         content = { padding ->
             Surface(modifier = Modifier.padding(padding)) {
                 when (state) {
@@ -56,7 +56,7 @@ fun PokemonsScreen(
                     ) {
                         val pokemons = (state as PokemonsState.Show).pokemons
                         items(pokemons.size) { index ->
-                            PokemonItem(
+                            PokemonItemComponent(
                                 pokemon = pokemons[index],
                                 onItemClick = onClick
                             )

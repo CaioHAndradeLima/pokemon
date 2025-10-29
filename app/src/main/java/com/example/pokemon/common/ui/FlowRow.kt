@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.offset
 import kotlin.math.roundToInt
 
 @Composable
-fun FlowRow(
+fun FlowRowComponent(
     horizontalGap: Dp = 0.dp,
     verticalGap: Dp = 0.dp,
     alignment: Alignment.Horizontal = Alignment.Start,
@@ -26,14 +26,14 @@ fun FlowRow(
     val horizontalGapPx = horizontalGap.toPx().roundToInt()
     val verticalGapPx = verticalGap.toPx().roundToInt()
 
-    val rows = mutableListOf<Row>()
+    val rows = mutableListOf<RowComponent>()
     var rowConstraints = constraints
     var rowPlaceables = mutableListOf<Placeable>()
 
     measurables.forEach { measurable ->
         val placeable = measurable.measure(Constraints())
         if (placeable.measuredWidth !in rowConstraints.minWidth..rowConstraints.maxWidth) {
-            rows += Row(rowPlaceables, horizontalGapPx)
+            rows += RowComponent(rowPlaceables, horizontalGapPx)
             rowConstraints = constraints
             rowPlaceables = mutableListOf()
         }
@@ -41,7 +41,7 @@ fun FlowRow(
         rowConstraints = rowConstraints.offset(horizontal = -consumedWidth)
         rowPlaceables.add(placeable)
     }
-    rows += Row(rowPlaceables, horizontalGapPx)
+    rows += RowComponent(rowPlaceables, horizontalGapPx)
 
     val width = constraints.maxWidth
     val height = (rows.sumOf { row -> row.height } + (rows.size - 1) * verticalGapPx)
@@ -61,7 +61,7 @@ fun FlowRow(
     }
 }
 
-private class Row(
+private class RowComponent(
     val placeables: List<Placeable>,
     val horizontalGapPx: Int,
 ) {
@@ -77,7 +77,7 @@ private class Row(
 @Composable
 private fun Preview(alignment: Alignment.Horizontal) {
     Box(Modifier.width(100.dp)) {
-        FlowRow(
+        FlowRowComponent(
             horizontalGap = 8.dp,
             verticalGap = 8.dp,
             alignment = alignment,

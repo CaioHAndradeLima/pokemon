@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pokemon.R
 import com.example.pokemon.common.ui.CoilImageComponent
-import com.example.pokemon.common.ui.FlowRow
+import com.example.pokemon.common.ui.FlowRowComponent
 import com.example.pokemon.common.ui.TagComponent
 import com.example.pokemon.data.model.Pokemon
 
@@ -119,7 +119,7 @@ fun PokemonComponent(
             )
 
             Surface(modifier = Modifier.padding(horizontal = 16.dp)) {
-                FlowRow(horizontalGap = 8.dp, verticalGap = 8.dp) {
+                FlowRowComponent(horizontalGap = 8.dp, verticalGap = 8.dp) {
                     it.forEach {
                         TagComponent(
                             tagText = it.move.name

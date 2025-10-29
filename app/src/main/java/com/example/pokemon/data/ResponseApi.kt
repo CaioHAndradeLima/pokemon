@@ -17,12 +17,5 @@ sealed class ResponseApi<out T> {
         data class Http<T>(
             override val message: UiText
         ) : Error<T>(message)
-
-        data class Unknown<T>(
-            val throwable: Throwable,
-            override val message: UiText = UiText.Dynamic(
-                throwable.localizedMessage ?: "Unknown error"
-            )
-        ) : Error<T>(message)
     }
 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun DefaultTopBar(title: String = "Pokemons") {
+fun DefaultTopBarComponent(title: String = "Pokemons") {
     Surface(
         modifier = Modifier
             .fillMaxWidth()

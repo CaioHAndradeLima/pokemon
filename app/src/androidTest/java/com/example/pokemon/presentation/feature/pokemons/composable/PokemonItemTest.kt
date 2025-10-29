@@ -7,7 +7,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.provider.provideDefaultPokemonTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +26,7 @@ internal class PokemonItemTest {
         val pokemon = provideDefaultPokemonTest()
 
         composeTestRule.setContent {
-            PokemonItem(
+            PokemonItemComponent(
                 pokemon = pokemon,
                 onItemClick = { clickedPokemon = it }
             )
@@ -45,7 +44,7 @@ internal class PokemonItemTest {
         val pokemon = provideDefaultPokemonTest()
 
         composeTestRule.setContent {
-            PokemonItem(
+            PokemonItemComponent(
                 pokemon = pokemon,
                 onItemClick = { }
             )

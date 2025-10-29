@@ -15,7 +15,7 @@ import com.example.pokemon.common.ui.CoilImageComponent
 import com.example.pokemon.data.model.Pokemon
 
 @Composable
-fun PokemonItem(
+fun PokemonItemComponent(
     pokemon: Pokemon,
     onItemClick: (Pokemon) -> Unit,
 ) {

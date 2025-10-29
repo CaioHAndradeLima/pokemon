@@ -1,27 +1,19 @@
 package com.example.pokemon.domain.usecase
 
 import com.example.pokemon.R
-import com.example.pokemon.assertInstanceOf
-import com.example.pokemon.assertSameClass
 import com.example.pokemon.common.network.RequestResource
 import com.example.pokemon.common.resource.UiText
 import com.example.pokemon.data.ResponseApi
 import com.example.pokemon.data.model.Pokemon
 import com.example.pokemon.data.repository.PokemonApiRepository
-import com.example.pokemon.data.repository.PokemonRemoteRepository
-import com.example.pokemon.getHttpExceptionMessage
 import com.example.pokemon.provider.provideDefaultPokemonTest
 import com.example.pokemon.provider.providePokemonWithoutPictureTest
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
-import retrofit2.HttpException
-import retrofit2.Response
-import java.io.IOException
 
 class PokemonsUseCaseTest {
 
